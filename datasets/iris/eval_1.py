@@ -8,20 +8,23 @@ from src.si.io.data_file import *
 filename = 'C:\\Users\\Fofinha\\Desktop\\UNI\\MESTRADO\\2o ANO\\Sistemas Inteligentes\\si\\datasets\\iris\\iris.csv'
 
 #1.1.
-dataset = read_csv(filename, sep = ',')
+dataset = read_csv(filename, sep = ',', features = True, label = True)
+dataset.shape()
 
 #1.2.
 penultimate = dataset.X[:, -2]
-penultimate.shape
+penultimate.shape()
 
 #1.3.
-last_10 = dataset[:-10, :]
-last_10.get_mean
+last_10 = dataset.X[-10:]
+last_10.get_mean()
 
 #1.4.
-selected_samples = dataset[dataset.X <= 6]
-tot = sum(selected_samples)
+selected_samples = len(dataset.X[dataset.X <= 6])
+
 
 #1.5.
-not_setosa = dataset[dataset['class'] != 'Iris-setosa']
-total = sum(not_setosa)
+not_setosa = len(dataset.X[dataset.y['class'] != 'Iris-setosa'])
+
+
+#2.
