@@ -1,9 +1,9 @@
-__author__ = "João Correia"
-__credits__ = ["João Correia, Fernando Cruz", "Vítor Pereira"]
+__author__ = "Joana Araújo"
+__credits__ = ["Fernando Cruz, Vítor Pereira, Joana Araújo"]
 __license__ = "Apache License 2.0"
 __version__ = "0.0.1"
-__maintainer__ = "João Correia"
-__email__ = "jfscorreia95@gmail.com"
+__maintainer__ = "Joana Araújo"
+__email__ = "pg49836@alunos.uminho.pt"
 
 # -----------------------------------------------------------------------------------
 # This package is heavily inspired and adapted from
