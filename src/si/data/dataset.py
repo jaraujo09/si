@@ -46,7 +46,7 @@ class Dataset:
 
     def has_label(self) -> bool:
         """
-        Returns True if the dataset has a label
+        Returns True if the dataset has a label (y)
         Returns
         -------
         bool
@@ -55,7 +55,7 @@ class Dataset:
 
     def get_classes(self) -> np.ndarray:
         """
-        Returns the unique classes in the dataset
+        Returns the unique classes in the dataset (possible valus of y)
         Returns
         -------
         numpy.ndarray (n_classes)
@@ -112,7 +112,7 @@ class Dataset:
 
     def summary(self) -> pd.DataFrame:
         """
-        Returns a summary of the dataset
+        Returns a summary of the dataset, with all descriptive methods
         Returns
         -------
         pandas.DataFrame (n_features, 5)
