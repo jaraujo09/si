@@ -131,12 +131,12 @@ class Dataset:
         """
         Method that removes all samples containing at least one null value (NaN), updating X and y.
         """
-        na_values = np.isna(self.X).any(axis = 1)
+        na_values = np.isnan(self.X).any(axis = 1)
         self.X = self.X[~na_values]
         if self.has_label():
             self.y = self.y[na_values]
 
-        return np.where(na_values)
+        return self
 
     def fillna(self, choice:str=None):
         """
@@ -165,7 +165,7 @@ class Dataset:
         else:
             method = np.nan_to_num(col)
 
-        return np.isna(self.X, axis = 0)
+        return self
     
     def remove_from_index(self, index:int):
         """
@@ -183,7 +183,7 @@ class Dataset:
         if self.has_label():
             self.y = np.delete(self.y, index)
 
-        return np.delete(self.X, axis = 0)
+        return self
 
 
     @classmethod
