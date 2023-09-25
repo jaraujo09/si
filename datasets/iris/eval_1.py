@@ -19,7 +19,6 @@ print(penultimate.shape)
 last_10 = dataset.X[-10:]
 print(last_10.mean())
 
-
 #1.4.
 selected_samples = len(dataset.X[dataset.X <= 6])
 print(selected_samples)

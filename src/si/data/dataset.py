@@ -55,7 +55,7 @@ class Dataset:
 
     def get_classes(self) -> np.ndarray:
         """
-        Returns the unique classes in the dataset (possible valus of y)
+        Returns the unique classes in the dataset (possible values of y)
         Returns
         -------
         numpy.ndarray (n_classes)
