@@ -57,7 +57,7 @@ class SelectKBest:
         self: object
             Returns self.
         """
-        self.F, self.p = self.score_func(dataset)
+        self.F, self.p = self.score_func(dataset)  
         return self
 
     def transform(self, dataset: Dataset) -> Dataset:
