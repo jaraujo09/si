@@ -17,10 +17,10 @@ print(penultimate.shape)
 
 #1.3.
 last_10 = dataset.X[-10:]
-print(last_10.mean())
+print(last_10)
 
 #1.4.
-selected_samples = len(dataset.X[dataset.X <= 6])
+selected_samples = dataset.X[(dataset.X[:,] <= 6).all(axis=1)]
 print(selected_samples)
 
 #1.5.

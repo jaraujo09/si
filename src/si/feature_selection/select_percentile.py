@@ -4,7 +4,7 @@ from si.data.dataset import Dataset
 from si.statistics.f_classification import f_classification
 
 class SelectPercentile:
-    def __init__(self, score_func = f_classification, percentile : float = 0.2)-> None:
+    def __init__(self, score_func = f_classification, percentile : int = 50)-> None:
         """
         Select features with the highest F value up to the specified percentile.
 
@@ -13,7 +13,7 @@ class SelectPercentile:
         score_func: callable, default = f_classification
             Variance analysis function. Function taking dataset and returning a pair of arrays (scores, p_values)
 
-        percentile: float, default = 0.2
+        percentile: float, default = 50
             Percentile for selecting features
         """
         self.score_func = score_func
