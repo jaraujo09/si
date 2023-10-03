@@ -126,6 +126,16 @@ class Dataset:
         }
         return pd.DataFrame.from_dict(data, orient="index", columns=self.features)
 
+    def print_dataframe(self)->pd.DataFrame:
+        """
+        Prints the dataset as a dataframe.
+        :return: DataFrame
+        """
+        if self.x is None:
+            return
+
+        return pd.DataFrame(self.x, columns=self.features_names, index=self.y)
+
 
     def dropna(self) -> np.ndarray:
         """
@@ -151,8 +161,8 @@ class Dataset:
             raise ValueError("Choose what method you want to use to fill NA gaps")
 
         #finding columns with NA values with bool (if bool == True, means that there is a NA value)
-        NA_cols =np.isnan(self.X).any(axis=0)
-        NA_cols_index = np.where(NA_cols[0])
+        NA_cols =np.isnan(self.X).any(axis=0)  #if True means there is an NaN value
+        NA_cols_index = np.where(NA_cols[0])  #get index where True
 
         #getting columns where indexes have NA values and explaining each method
         for cols in NA_cols_index:
@@ -162,8 +172,10 @@ class Dataset:
             method = np.nanmean(col)
         elif choice == 'median':
             method = np.nanmedian(col)
-        else:
-            method = np.nan_to_num(col)
+        elif choice == 'value':
+            method = np.random.uniform(np.nanmin(col), np.nanmax(col))
+
+        col[np.isnan(col)] == method
 
         return self
     
