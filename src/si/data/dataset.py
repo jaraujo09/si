@@ -126,16 +126,6 @@ class Dataset:
         }
         return pd.DataFrame.from_dict(data, orient="index", columns=self.features)
 
-    def print_dataframe(self)->pd.DataFrame:
-        """
-        Prints the dataset as a dataframe.
-        :return: DataFrame
-        """
-        if self.x is None:
-            return
-
-        return pd.DataFrame(self.x, columns=self.features_names, index=self.y)
-
 
     def dropna(self) -> np.ndarray:
         """
