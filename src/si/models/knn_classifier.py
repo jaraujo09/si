@@ -42,7 +42,7 @@ class KNNClassifier:
         self.distance = distance
 
         # attributes
-        self.dataset = None
+        self.train_dataset = None
 
     def fit(self, dataset: Dataset) -> 'KNNClassifier':
         """
@@ -76,7 +76,7 @@ class KNNClassifier:
             The closest label
         """
         # compute the distance between the sample and the dataset
-        distances = self.distance(sample, self.dataset.X)
+        distances = self.distance(sample, self.train_dataset.X)
 
         # get the k nearest neighbors
         k_nearest_neighbors = np.argsort(distances)[:self.k]
