@@ -80,5 +80,22 @@ class KNNRegressor:
         return np.apply_along_axis(self._get_closest_label, axis = 1, arr = dataset.X)
         #applying the function to all lines of the dataset (not specific to test or train)
         #checks distances between samples, selects k nearest and does the mean of y values of those
+
+    def score(self, dataset: Dataset) -> float:
+        """
+        It returns the accuracy of the model on the given dataset
+
+        Parameters
+        ----------
+        dataset: Dataset
+            The dataset to evaluate the model on
+
+        Returns
+        -------
+        accuracy: float
+            The accuracy of the model
+        """
+        predictions = self.predict(dataset)
+        return rmse(dataset.y, predictions)
     
 
