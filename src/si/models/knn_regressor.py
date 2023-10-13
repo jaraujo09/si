@@ -81,7 +81,7 @@ class KNNRegressor:
         #applying the function to all lines of the dataset (not specific to test or train)
         #checks distances between samples, selects k nearest and does the mean of y values of those
 
-    def score(self, dataset: Dataset) -> float:
+    def score(self, dataset: Dataset) -> np.ndarray:
         """
         It returns the accuracy of the model on the given dataset
 
