@@ -25,24 +25,24 @@ class KNNRegressor:
     dataset: np.ndarray
         The training data
     """
-    def __init__(self,k:int=1,distance:Callable=euclidean_distance):
+    def __init__(self, k: int= 1, distance: Callable = euclidean_distance):
         """
-        This algorithm predicts the class for a sample using the k most similar examples.But is suitable for regression problems.
+        KNNRegressor predicts the class for a sample using the k most similar examples.But is suitable for regression problems.
         So estimates the average value of the k most similar examples instead of the most common class.
-        Args:
-            k :int 
+        Parameters:
+            k : int 
                 number of examples to consider
             distance: Callable 
-                euclidean distance function. .
+                euclidean distance function.
         """
         #parameters
-        self.k=k # numero de k-mais proximos exemplos a considera
+        self.k=k #k nearest
         
         #atributes
-        self.distance=distance #distance function between each sample to the samples of the train dataset
-        self._train_dataset=None # train dataset
+        self.distance = distance #distance function between each sample to the samples of the train dataset
+        self._train_dataset = None # train dataset
 
-    def fit(self, dataset:Dataset) -> "KNNRegressor":
+    def fit(self, dataset: Dataset) -> "KNNRegressor":
         """
         It fits the model to the given dataset
 
@@ -56,10 +56,10 @@ class KNNRegressor:
         self: KNNRegressor
             The fitted model
         """
-        self._train_dataset=dataset # o input é o dataset de treino logo apenas fiz este passo-guardar o dataset treino
+        self._train_dataset= dataset # train dataset as input
         return self
     
-    def _get_closest_value_label(self,sample:np.ndarray)->int:
+    def _get_closest_value_label(self,sample: np.ndarray)->int:
         """
         It returns the closest label of the given sample
 
@@ -73,11 +73,11 @@ class KNNRegressor:
         label: str or int
             The closest label
         """
-        distances=self.distance(sample,self._train_dataset.X) #distance between each sample to the samples of the train dataset
-        k_nearest_neighbors=np.argsort(distances)[:self.k] #indexes of the k most similar examples in crescent order, where the first K will be the closest
+        distances= self.distance(sample, self._train_dataset.X) #distance between each sample to the samples of the train dataset
+        k_nearest_neighbors = np.argsort(distances)[:self.k] #indexes of the k most similar examples in crescent order, where the first K will be the closest
 
-        k_nearest_neighbors_values_labels=self._train_dataset.y[k_nearest_neighbors] #  y values of the shortest distance
-        return np.mean(k_nearest_neighbors_values_labels) #mesma logica mas agora aplico as medias
+        k_nearest_neighbors_values_labels = self._train_dataset.y[k_nearest_neighbors] #  y values of the shortest distance
+        return np.mean(k_nearest_neighbors_values_labels)
 
     
     def predict(self,dataset:Dataset) -> np.ndarray:
@@ -95,9 +95,9 @@ class KNNRegressor:
         predictions: np.ndarray
             The predictions of the model, with the supose values
         """
-        return np.apply_along_axis(self._get_closest_value_label,axis=1,arr=dataset.X) #
+        return np.apply_along_axis(self._get_closest_value_label, axis=1, arr=dataset.X) #apply get_closest_label to all lines of dataset (not specific to train or test dataset)
        
-    def score(self,dataset:Dataset) -> float:
+    def score(self, dataset: Dataset) -> float:
         """
         It returns the rmse of the model on the given dataset
 
@@ -111,8 +111,8 @@ class KNNRegressor:
         rmse: float
             The rmse(error) of the model
         """       
-        predictions=self.predict(dataset)
-        return rmse(dataset.y,predictions) #compares the predicted with real values
+        predictions= self.predict(dataset)
+        return rmse(dataset.y, predictions) #compares the predicted with real values
 
 
 if __name__ == '__main__':
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     num_features = 100
 
     X = np.random.rand(num_samples, num_features)
-    y = np.random.rand(num_samples)  # Valores apropriados para regressão
+    y = np.random.rand(num_samples) 
 
     dataset_ = Dataset(X=X, y=y)
 
