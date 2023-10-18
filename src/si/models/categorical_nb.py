@@ -112,7 +112,7 @@ if __name__ == '__main__':
     dataset_ = Dataset.from_random(600, 100, 2)
     dataset_train, dataset_test = train_test_split(dataset_, test_size=0.2)
 
-    # initialize the KNN classifier
+    # initialize the CategoricalNB
     nb = CategoricalNB(smoothing=1.0)
 
     # fit the model to the train dataset
