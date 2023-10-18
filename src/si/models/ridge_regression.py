@@ -33,7 +33,6 @@ class RidgeRegression:
     def __init__(self, l2_penalty: float = 1, alpha: float = 0.001, max_iter: int = 1000,
                  patience: int = 5, scale: bool = True):
         """
-
         Parameters
         ----------
         l2_penalty: float
@@ -75,7 +74,7 @@ class RidgeRegression:
         self: RidgeRegression
             The fitted model
         """
-        if self.scale:
+        if self.scale:  #in case its necessary to scale
             # compute mean and std
             self.mean = np.nanmean(dataset.X, axis=0)
             self.std = np.nanstd(dataset.X, axis=0)
@@ -87,18 +86,23 @@ class RidgeRegression:
         m, n = dataset.shape()
 
         # initialize the model parameters
-        self.theta = np.zeros(n)
-        self.theta_zero = 0
+        self.theta = np.zeros(n)   #zero matrix, where the number of zeros correspondes to the number of features (n)
+        # theta are coefficients of the model for every feature
+        self.theta_zero = 0  #the zero coefficient (y intercept)
 
         i = 0
         early_stopping = 0
-        # gradient descent
+        # gradient descent - descendent to the minimum of the error function
         while i < self.max_iter and early_stopping < self.patience:
+            # while i is lower than the max of iterations AND the number of iterations without improvement is higher than the early stop
+            
             # predicted y
             y_pred = np.dot(X, self.theta) + self.theta_zero
+            # the function np.dot calculates the scalar product between matrices
 
-            # computing and updating the gradient with the learning rate
+            # computing and updating the gradient with the learning rate (alpha)
             gradient = (self.alpha / m) * np.dot(y_pred - dataset.y, X)
+            #alpha cannot be very high because it can lead to a faster convergence with risk of divergence, but also not very low because convergence will be very slow
 
             # computing the penalty
             penalization_term = self.theta * (1 - self.alpha * (self.l2_penalty / m))
@@ -109,11 +113,11 @@ class RidgeRegression:
 
             # compute the cost
             self.cost_history[i] = self.cost(dataset)
-            if i > 0 and self.cost_history[i] > self.cost_history[i - 1]:
+            if i > 0 and self.cost_history[i] >= self.cost_history[i - 1]: #if the cost_history is higher than the latter, we increment early stop by 1
                 early_stopping += 1
-            else:
+            else:   #if the cost_history is not higher than the latter, early_stop doesnt increment. This can only happen 5 times in a row, because of pacience = 5
                 early_stopping = 0
-            i += 1
+            i += 1   #incrementation of iterations
 
         return self
 
@@ -166,7 +170,7 @@ class RidgeRegression:
             The cost function of the model
         """
         y_pred = self.predict(dataset)
-        return (np.sum((y_pred - dataset.y) ** 2) + (self.l2_penalty * np.sum(self.theta ** 2))) / (2 * len(dataset.y))
+        return (np.sum((y_pred - dataset.y) ** 2) + (self.l2_penalty * np.sum(self.theta ** 2))) / (2 * len(dataset.y))  #len(dataset.y) is the number of samples
 
 
 if __name__ == '__main__':
