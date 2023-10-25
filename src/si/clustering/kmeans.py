@@ -224,3 +224,30 @@ if __name__ == '__main__':
     predictions = kmeans.predict(dataset_)
     print(res.shape)
     print(predictions.shape)
+
+    #testing 
+    import matplotlib.pyplot as plt
+    np.random.seed(0)
+    num_samples = 100
+    num_features = 5
+    X = np.random.rand(num_samples, num_features)  # Dados de recursos aleatórios
+    y = np.random.randint(0, 2, num_samples)  # Rótulos aleatórios (assumindo uma classificação binária)
+
+    dataset = Dataset(X=X, y=y)
+    elbow=[]
+    for k_ in range (2,101):
+        kmeans = KMeans(k_)
+        res = kmeans.fit_transform(dataset)
+        predictions = kmeans.predict(dataset)
+        distances = kmeans.transform(dataset)
+        close_dist = np.min(distances, axis=1)
+        cotovelo=np.mean(close_dist,axis=0)
+        elbow.append(cotovelo)
+    
+    # Plote a curva da variância em relação a k
+    plt.figure(figsize=(8, 6))
+    plt.plot(range(2, 101), elbow, marker='o', linestyle='-', color='b')
+    plt.xlabel('Número de Clusters (k)')
+    plt.ylabel('Variancia das Percentagens')
+    plt.title('Método do Cotovelo (Elbow Method)')
+    plt.show()
