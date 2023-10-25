@@ -12,16 +12,16 @@ class Dataset:
         Parameters
         ----------
         X: numpy.ndarray (n_samples, n_features)
-            The feature matrix
+            The feature matrix (values that characterize the features)
         y: numpy.ndarray (n_samples, 1)
             The label vector
         features: list of str (n_features)
-            The feature names
+            The feature names (vector)
         label: str (1)
-            The label name
+            The label name (name of the dependent variable, only one)
         """
         if X is None:
-            raise ValueError("X cannot be None")
+            raise ValueError("X cannot be None")  #must exist a matrix X
         if y is not None and len(X) != len(y):
             raise ValueError("X and y must have the same length")
         if features is not None and len(X[0]) != len(features):
@@ -37,7 +37,7 @@ class Dataset:
 
     def shape(self) -> Tuple[int, int]:
         """
-        Returns the shape of the dataset
+        Returns the shape of the dataset, that is a tuple of (samples, features)
         Returns
         -------
         tuple (n_samples, n_features)
@@ -67,7 +67,7 @@ class Dataset:
 
     def get_mean(self) -> np.ndarray:
         """
-        Returns the mean of each feature
+        Returns the mean of each feature (column)
         Returns
         -------
         numpy.ndarray (n_features)
@@ -129,14 +129,14 @@ class Dataset:
 
     def dropna(self) -> np.ndarray:
         """
-        Method that removes all samples containing at least one null value (NaN), updating X and y.
+        Method that removes the line of the samples containing at least one null value (NaN), updating X and y.
         """
         na_values = np.isnan(self.X).any(axis = 1)
-        self.X = self.X[~na_values]
-        if self.has_label():
-            self.y = self.y[na_values]
+        self.X = self.X[~na_values]  #negation operator (which means if is not an na_value)
+        self.y = self.y[~na_values]
+        index = np.where(na_values)
 
-        return self
+        return self, index
 
     def fillna(self, choice:str=None):
         """
@@ -148,24 +148,24 @@ class Dataset:
                 choose the method to fill the NA (value, mean or median)
         """
         if choice is None:
-            raise ValueError("Choose what method you want to use to fill NA gaps")
+            raise ValueError("please, put the value or mean or median")
+        columns_true=np.isnan(self.X).any(axis=0) 
+        nan_columns_indices = np.where(columns_true)[0] # get index where bool is True
+        
 
-        #finding columns with NA values with bool (if bool == True, means that there is a NA value)
-        NA_cols =np.isnan(self.X).any(axis=0)  #if True means there is an NaN value
-        NA_cols_index = np.where(NA_cols[0])  #get index where True
-
-        #getting columns where indexes have NA values and explaining each method
-        for cols in NA_cols_index:
-            col = self.X[: , cols] 
-
-        if choice == 'mean':
-            method = np.nanmean(col)
-        elif choice == 'median':
-            method = np.nanmedian(col)
-        elif choice == 'value':
-            method = np.random.uniform(np.nanmin(col), np.nanmax(col))
-
-        col[np.isnan(col)] == method
+        for col_index in nan_columns_indices:
+            col = self.X[:, col_index]#cols with nan vals
+            
+            if choice == "value": #opto por escolher entro o maximo e o minimo
+                min_value = np.nanmin(col)
+                max_value = np.nanmax(col)
+                final = np.random.uniform(min_value, max_value) #algo aleatorio entre o minimo e o maximo
+            elif choice == "median":
+                final = np.nanmedian(col)
+            elif choice == "mean":
+                final = np.nanmean(col)
+            
+            col[np.isnan(col)] = final # vou buscar os valores nan como true(dentro da coluna já identificada como ter esses valores) e depois , é basicamente col[onde é true?] e substituir pelo que quero
 
         return self
     
@@ -178,13 +178,16 @@ class Dataset:
         index : int 
                 integer corresponding to the sample to remove
         """
-        if index < 0 or index >= len(self.X):
-            raise ValueError("Write a valid index between bounds")
-        self.X = np.delete(self.X, index, axis = 0)
-
-        if self.has_label():
+        if not isinstance(index, int):
+            raise ValueError("Please provide a valid integer index.")
+        
+        if index <0 and index> self.X.shape[0]:
+            raise ValueError("Write a valid index")
+        
+        self.X = np.delete(self.X, index, axis=0) 
+        if self.y is not None: #if there is a y i want to delete it 
             self.y = np.delete(self.y, index)
-
+        
         return self
 
 
@@ -260,19 +263,34 @@ class Dataset:
         y = np.random.randint(0, n_classes, n_samples)
         return cls(X, y, features=features, label=label)
 
-
+#Testing
 if __name__ == '__main__':
     X = np.array([[1, 2, 3], [4, 5, 6]])
     y = np.array([1, 2])
     features = np.array(['a', 'b', 'c'])
     label = 'y'
     dataset = Dataset(X, y, features, label)
-    print(dataset.shape())
-    print(dataset.has_label())
-    print(dataset.get_classes())
-    print(dataset.get_mean())
-    print(dataset.get_variance())
-    print(dataset.get_median())
-    print(dataset.get_min())
-    print(dataset.get_max())
-    print(dataset.summary())
+    print('Shape: ', dataset.shape())
+    print('Has label: ', dataset.has_label())
+    print('Classes: ', dataset.get_classes())
+    print('Mean: ', dataset.get_mean())
+    print('Variance: ', dataset.get_variance())
+    print('Median: ', dataset.get_median())
+    print('Minimun: ', dataset.get_min())
+    print('Maximun: ', dataset.get_max())
+    print('Summary: \n', dataset.summary())
+    
+
+    # Dados de exemplo
+    X = np.array([[1, 2, 3],
+                [4, 5, np.nan],
+                [7, np.nan, 9]])
+    y = np.array([0, 1, 0])
+    features = ['feature_1', 'feature_2', 'feature_3']
+    label = 'target'
+    dataset = Dataset(X, y, features, label)
+
+    choice = 'value'
+    dataset_choice = dataset.fillna(choice)
+    print('Fill NA: \n', dataset_choice.X)
+    print('Dataset: \n', dataset.X,dataset.y)

@@ -4,7 +4,7 @@ from si.data.dataset import Dataset
 from si.statistics.f_classification import f_classification
 
 class SelectPercentile:
-    def __init__(self, score_func = f_classification, percentile : int = 50)-> None:
+    def __init__(self, score_func = f_classification, percentile : float = 50)-> None:
         """
         Select features with the highest F value up to the specified percentile.
 
@@ -78,7 +78,7 @@ class SelectPercentile:
         self.fit(dataset)
         return self.transform(dataset)
     
-
+#Testing
 if __name__ == '__main__':
     from si.data.dataset import Dataset
 
@@ -93,3 +93,12 @@ if __name__ == '__main__':
     selector = selector.fit(dataset)
     dataset = selector.transform(dataset)
     print(dataset.features)
+
+
+    percentiles = [50,25,75]
+    for percentile in percentiles:
+        selector = SelectPercentile(percentile=percentile)
+        selector = selector.fit(dataset)
+        dataset_filtered = selector.transform(dataset)
+        print(f"Features for percentile {percentile}: {dataset_filtered.features}")
+        print(dataset_filtered.X)
