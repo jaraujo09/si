@@ -104,7 +104,7 @@ class LogisticRegression:
             penalization_term = self.theta * (1 - self.alpha * (self.l2_penalty / m))
 
             # update the model parameters
-            self.theta = (self.theta * penalization_term) - gradient
+            self.theta = penalization_term - gradient
             self.theta_zero = self.theta_zero - (self.alpha * (1 / m)) * np.sum(y_pred - dataset.y)
 
             # compute the cost
