@@ -44,7 +44,7 @@ class VotingClassifier:
             The fitted model.
         """
         for model in self.models:
-            model.fit(dataset)
+            model.fit(dataset)  #trains all models listed in the same dataset
 
         return self
 
@@ -79,11 +79,13 @@ class VotingClassifier:
                 The majority vote of the given predictions
             """
             # get the most common label
-            labels, counts = np.unique(pred, return_counts=True)
-            return labels[np.argmax(counts)]
+            labels, counts = np.unique(pred, return_counts=True)  # an array of unique labels and an array of the counts of each unique label
+            return labels[np.argmax(counts)]  #the label that corresponds to the maximum count in the counts array, which represents the majority vote
 
         predictions = np.array([model.predict(dataset) for model in self.models]).transpose()
-        return np.apply_along_axis(_get_majority_vote, axis=1, arr=predictions)
+        # iterates over each model in self.models, calls the predict method of each model with the input dataset, 
+        # and stores the predictions in an array. The .transpose() method is then used to transpose the array, so each row corresponds to a sample, and each column corresponds to a model's prediction
+        return np.apply_along_axis(_get_majority_vote, axis=1, arr=predictions)  #majority vote for each row
 
     def score(self, dataset: Dataset) -> float:
         """
@@ -108,10 +110,21 @@ if __name__ == '__main__':
     from si.model_selection.split import train_test_split
     from si.models.knn_classifier import KNNClassifier
     from si.models.logistic_regression import LogisticRegression
+    num_samples = 600
+    num_features = 100
+    num_classes = 2
 
-    # load and split the dataset
-    dataset_ = Dataset.from_random(600, 100, 2)
+    # random data
+    X = np.random.rand(num_samples, num_features)  
+    y = np.random.randint(0, num_classes, size=num_samples)  # classe aleatórios
+
+    dataset_ = Dataset(X=X, y=y)
+
+    #  features and class name
+    dataset_.features = ["feature_" + str(i) for i in range(num_features)]
+    dataset_.label = "class_label"
     dataset_train, dataset_test = train_test_split(dataset_, test_size=0.2)
+
 
     # initialize the KNN and Logistic classifier
     knn = KNNClassifier(k=3)
