@@ -4,6 +4,25 @@ from si.data.dataset import Dataset
 from si.statistics.f_classification import f_classification
 
 class SelectPercentile:
+    """
+    Selects a certain percentage of the features taking into account the F-score value.
+    First we see the F-score of each feature and sorted that.
+    Then we choose a percentil that representes x % of this f-values sorted
+    so we keep the features that indices have the F-value <= to the percentile
+    
+    Parameters
+    -----------
+    score_func: taking the dataset and return a pair os array (F and p value)- allow analize the variance 
+    percentile: number that represents a percentage of the data 
+
+    estimated parameters(given by the score_func)
+    ---------------
+    F: 
+        the F value for each feature estimated by the score_func
+    p:
+        the p value for each feature estimated by the score_func
+    """
+    
     def __init__(self, score_func = f_classification, percentile : float = 50)-> None:
         """
         Select features with the highest F value up to the specified percentile.

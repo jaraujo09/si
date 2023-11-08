@@ -64,9 +64,12 @@ class StackingClassifier:
         predictions = []
         for model in self.models:
             predictions.append(model.predict(dataset))
-
+        
         # gets the final model previsions
-        y_pred = self.final_model.predict(Dataset(np.array(predictions).T, dataset.y))
+        final_pred = self.final_model.predict(Dataset(dataset.X, np.array(predictions).T))
+        return final_pred
+        
+        
 
         return y_pred
 

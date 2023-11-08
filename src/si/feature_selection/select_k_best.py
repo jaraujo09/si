@@ -110,3 +110,20 @@ if __name__ == '__main__':
     selector = selector.fit(dataset)
     dataset = selector.transform(dataset)
     print(dataset.features)
+
+
+    dataset = Dataset(X=np.array([[0.2, np.nan, 0.06, 2.87],
+                                  [0.5, 1.5, 4, 3],
+                                  [0.3, 1.1, 1, 3.4]]),
+                      y=np.array([0, 1, 0]),
+                      features=["f1", "f2", "f3", "f4"],
+                      label="y")
+
+    dataset.fillna('mean')
+    ks = [3,1,4]
+    for k in ks:
+        selector = SelectKBest(k=k)
+        selector = selector.fit(dataset)
+        dataset_filtered = selector.transform(dataset)
+        print(f"Features for k {k}: {dataset_filtered.features}")
+        print(dataset_filtered.X)

@@ -51,7 +51,7 @@ class Dataset:
         -------
         bool
         """
-        return self.y is not None
+        return False if self.y is None else True
 
     def get_classes(self) -> np.ndarray:
         """
@@ -293,4 +293,4 @@ if __name__ == '__main__':
     choice = 'value'
     dataset_choice = dataset.fillna(choice)
     print('Fill NA: \n', dataset_choice.X)
-    print('Dataset: \n', dataset.X,dataset.y)
+    print('Dataset: \n', dataset.X, '\n' , dataset.y)

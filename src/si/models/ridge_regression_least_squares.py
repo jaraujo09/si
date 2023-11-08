@@ -140,7 +140,7 @@ if __name__ == '__main__':
     X = np.array([[1, 2], [2, 3], [3, 4], [4, 5]])
     y = np.array([2, 3, 4, 5])
     dataset_ = Dataset(X, y)
-
+    print('My model')
     # fit the model
     model = RidgeRegressionLeastSquares(l2_penalty=0.1, scale = True)
     model.fit(dataset_)
@@ -149,7 +149,7 @@ if __name__ == '__main__':
 
     # compute the score
     print(model.score(dataset_))
-
+    print('\n Compare with sklearn')
     # compare with sklearn
     from sklearn.linear_model import Ridge
     model = Ridge(alpha=2.0)

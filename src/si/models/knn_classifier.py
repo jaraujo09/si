@@ -42,7 +42,7 @@ class KNNClassifier:
         self.distance = distance
 
         # attributes
-        self.train_dataset = None
+        self.dataset = None  #train_Dataset
 
     def fit(self, dataset: Dataset) -> 'KNNClassifier':
         """
@@ -58,7 +58,7 @@ class KNNClassifier:
         self: KNNClassifier
             The fitted model
         """
-        self.train_dataset = dataset
+        self.dataset = dataset
         return self
 
     def _get_closest_label(self, sample: np.ndarray) -> Union[int, str]:
@@ -76,13 +76,13 @@ class KNNClassifier:
             The closest label
         """
         # compute the distance between the sample and the dataset
-        distances = self.distance(sample, self.train_dataset.X)
+        distances = self.distance(sample, self.dataset.X)
 
         # get the k nearest neighbors
         k_nearest_neighbors = np.argsort(distances)[:self.k]
 
         # get the labels of the k nearest neighbors
-        k_nearest_neighbors_labels = self.train_dataset.y[k_nearest_neighbors]
+        k_nearest_neighbors_labels = self.dataset.y[k_nearest_neighbors]
 
         # get the most common label
         labels, counts = np.unique(k_nearest_neighbors_labels, return_counts=True)

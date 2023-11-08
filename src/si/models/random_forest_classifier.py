@@ -6,7 +6,8 @@ from si.models.decision_tree_classifier import DecisionTreeClassifier
 
 class RandomForestClassifier:
     """
-    Ensemble machine learning technique that combines multiple decision trees to improve prediction accuracy and reduce overfitting
+    Ensemble machine learning technique that combines multiple decision trees to improve prediction accuracy 
+    and reduce overfitting
     """
 
     def __init__(self, n_estimators:int = 1000, 
@@ -61,9 +62,11 @@ class RandomForestClassifier:
         """
         if self.seed is not None:
             np.random.seed(self.seed)
+            
         n_samples, n_features = dataset.shape()
         if self.max_features is None:
             self.max_features = int(np.sqrt(n_features)) 
+
         #creating a bootstrap where the chosen samples are repetead but not the features
         for x in range(self.n_estimators):  #number of trees to use
             bootstrap_samples = np.random.choice(n_samples, n_samples, replace = True) #randomly selects n_samples indexs with replacements, which means that the same sample can be selected multiple times
