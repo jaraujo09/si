@@ -28,7 +28,7 @@ class ActivationLayer(Layer):
             The output of the layer.
         """
         self.input = input
-        self.output = self.activation_function(self.input)
+        self.output = self.activation_function(self.input)  #depending on linearity function (relu, softmax or sigmoid)
         return self.output
 
     def backward_propagation(self, output_error: float) -> Union[float, np.ndarray]:
@@ -45,7 +45,7 @@ class ActivationLayer(Layer):
         Union[float, numpy.ndarray]
             The output error of the layer.
         """
-        return self.derivative(self.input) * output_error
+        return self.derivative(self.input) * output_error  #derivate depends on the activation function chosen
 
     @abstractmethod
     def activation_function(self, input: np.ndarray) -> Union[float, np.ndarray]:
@@ -123,7 +123,7 @@ class SigmoidActivation(ActivationLayer):
         numpy.ndarray
             The output of the layer.
         """
-        return 1 / (1 + np.exp(-input))
+        return 1 / (1 + np.exp(-input))  #<0.5 its zero, else its one
 
     def derivative(self, input: np.ndarray):
         """
@@ -161,7 +161,7 @@ class ReLUActivation(ActivationLayer):
         numpy.ndarray
             The output of the layer.
         """
-        return np.maximum(0, input)
+        return np.maximum(0, input)  #if x is negative it becomes zero
 
     def derivative(self, input: np.ndarray):
         """
@@ -177,4 +177,89 @@ class ReLUActivation(ActivationLayer):
         numpy.ndarray
             The derivative of the activation function.
         """
-        return np.where(input > 0, 1, 0)
+        return np.where(input > 0, 1, 0)  #where input positive becomes one, else zero
+    
+
+class SoftmaxActivation(ActivationLayer):
+    """
+    Softmax activation function.
+    """
+
+    def activation_function(self, input: np.ndarray):
+        """
+        Softmax activation function.
+
+        Parameters
+        ----------
+        input: numpy.ndarray
+            The input to the layer.
+
+        Returns
+        -------
+        numpy.ndarray
+            The output of the layer.
+        """
+        shifted_input = input - np.max(input, axis=0, keepdims=True)
+        # Compute the exponentials of the shifted input
+        exp_input = np.exp(shifted_input)
+
+        # Compute the softmax output
+        softmax_output = exp_input / np.sum(exp_input, axis=0, keepdims=True) #formula
+
+        return softmax_output
+
+    def derivative(self, input: np.ndarray):
+        """
+        Derivative of the Softmax activation function.
+
+        Parameters
+        ----------
+        input: numpy.ndarray
+            The input to the layer.
+
+        Returns
+        -------
+        numpy.ndarray
+            The derivative of the activation function.
+        """
+        return self.activation_function(input)*(1-self.activation_function(input))
+    
+class TanhActivation(ActivationLayer):
+    """
+    Tanh activation function.
+    """
+
+    def activation_function(self, input: np.ndarray):
+        """
+        Tanh  activation function.
+
+        Parameters
+        ----------
+        input: numpy.ndarray
+            The input to the layer.
+
+        Returns
+        -------
+        numpy.ndarray
+            The output of the layer.
+        """
+        numerador=np.exp(input)-np.exp(-input) #formula
+        denominador=np.exp(input) + np.exp(-input)
+        return numerador/denominador
+
+    def derivative(self, input: np.ndarray):
+        """
+        Derivative of the Tanh  activation function.
+
+        Parameters
+        ----------
+        input: numpy.ndarray
+            The input to the layer.
+
+        Returns
+        -------
+        numpy.ndarray
+            The derivative of the activation function.
+        """
+        tanh_output = self.activation_function(input)
+        return 1 - (tanh_output ** 2)

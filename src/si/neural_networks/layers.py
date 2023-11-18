@@ -11,7 +11,7 @@ class Layer:
     Base class for neural network layers.
     """
 
-    @abstractmethod
+    @abstractmethod # allows that all methods from this class are used by the class that used, in this case, the Layer class
     def forward_propagation(self, input: np.ndarray, training: bool) -> np.ndarray:
         """
         Perform forward propagation on the given input, i.e., computes the output of a layer for a given input.
@@ -57,7 +57,7 @@ class Layer:
         str
             The name of the layer.
         """
-        return self.__class__.__name__
+        return self.__class__.__name__  #gets the name of the class
 
     @abstractmethod
     def output_shape(self) -> tuple:
@@ -106,7 +106,7 @@ class Layer:
         raise NotImplementedError
 
 
-class DenseLayer(Layer):
+class DenseLayer(Layer):  #gets the abstract of Layer
     """
     Dense layer of a neural network.
     """
@@ -123,24 +123,26 @@ class DenseLayer(Layer):
             The shape of the input to the layer.
         """
         super().__init__()
-        self.n_units = n_units
-        self._input_shape = input_shape
+        self.n_units = n_units  #nr of neurons
+        self._input_shape = input_shape  #nr of features
 
         self.input = None
         self.output = None
-        self.weights = None
-        self.biases = None
+        self.weights = None  #connect with the next layer
+        self.biases = None  #each neuron has an associated bias
 
-    def initialize(self, optimizer: Optimizer) -> 'DenseLayer':
+
+    def initialize(self, optimizer: Optimizer) -> 'DenseLayer':  #get random weights and bias that will later be optimized
         # initialize weights from a 0 centered uniform distribution [-0.5, 0.5)
-        self.weights = np.random.rand(self.input_shape()[0], self.n_units) - 0.5
+        self.weights = np.random.rand(self.input_shape()[0], self.n_units) - 0.5  #rows = features and colums = neurons, which means features*neurons = weights
+        
         # initialize biases to 0
-        self.biases = np.zeros((1, self.n_units))
-        self.w_opt = copy.deepcopy(optimizer)
+        self.biases = np.zeros((1, self.n_units))  #number of zeros are the size of neurons, bc each neuron has a bias
+        self.w_opt = copy.deepcopy(optimizer) 
         self.b_opt = copy.deepcopy(optimizer)
         return self
 
-    def parameters(self) -> int:
+    def parameters(self) -> int:  #weights(rows*columns) + bias
         """
         Returns the number of parameters of the layer.
 
@@ -149,9 +151,9 @@ class DenseLayer(Layer):
         int
             The number of parameters of the layer.
         """
-        return np.prod(self.weights.shape) + np.prod(self.biases.shape)
+        return np.prod(self.weights.shape) + np.prod(self.biases.shape)  #np.prod does multiplication
 
-    def forward_propagation(self, input: np.ndarray, training: bool) -> np.ndarray:
+    def forward_propagation(self, input: np.ndarray, training: bool) -> np.ndarray:  #bool to know if we're training or not
         """
         Perform forward propagation on the given input.
 
@@ -167,7 +169,7 @@ class DenseLayer(Layer):
         numpy.ndarray
             The output of the layer.
         """
-        self.input = input
+        self.input = input  # X in the firts layer
         self.output = np.dot(self.input, self.weights) + self.biases
         return self.output
 
@@ -189,18 +191,24 @@ class DenseLayer(Layer):
         """
         # computes the layer input error (the output error from the previous layer),
         # dE/dX, to pass on to the previous layer
-        input_error = np.dot(output_error, self.weights.T)
+        input_error = np.dot(output_error, self.weights.T)  #error to discover to go to the layer before, knowing we have the error output as input
+        
         # computes the weight error: dE/dW = X.T * dE/dY
+        #error associated to the weights. has to be equal to the number os existing weights in the layers before and after
         weights_error = np.dot(self.input.T, output_error)
+        
         # computes the bias error: dE/dB = dE/dY
+        #equals to the number os neurons in the last layer
+        #np.dot(A,B) = ncolsA = nrowsB
         bias_error = np.sum(output_error, axis=0, keepdims=True)
 
         # updates parameters
-        self.weights = self.w_opt.update(self.weights, weights_error)
-        self.biases = self.b_opt.update(self.biases, bias_error)
+        self.weights = self.w_opt.update(self.weights, weights_error)  #optimization and update
+        self.biases = self.b_opt.update(self.biases, bias_error)   #we can use gradient discent as other optimizers
         return input_error
 
-    def output_shape(self) -> tuple:
+
+    def output_shape(self) -> tuple:  #to be tabular
         """
         Returns the shape of the output of the layer.
 
@@ -209,4 +217,4 @@ class DenseLayer(Layer):
         tuple
             The shape of the output of the layer.
         """
-        return (self.n_units,)
+        return (self.n_units,)  #number of neurons
