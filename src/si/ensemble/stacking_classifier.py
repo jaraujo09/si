@@ -1,6 +1,6 @@
 from si.data.dataset import Dataset
 from si.metrics.accuracy import accuracy
-from si.models import knn_classifier, logistic_regression, decision_tree_classifier
+from si.models import knn_classifier , logistic_regression, decision_tree_classifier
 from si.model_selection.split import train_test_split
 import numpy as np
 

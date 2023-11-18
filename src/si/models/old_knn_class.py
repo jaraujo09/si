@@ -42,7 +42,7 @@ class KNNClassifier:
         self.distance = distance
 
         # attributes
-        self.dataset = None
+        self.dataset = None  #train_Dataset
 
     def fit(self, dataset: Dataset) -> 'KNNClassifier':
         """
@@ -126,9 +126,11 @@ if __name__ == '__main__':
     # import dataset
     from si.data.dataset import Dataset
     from si.model_selection.split import train_test_split
+    from si.io.csv_file import read_csv
 
     # load and split the dataset
-    dataset_ = Dataset.from_random(600, 100, 2)
+    filename_breast = r"C:\Users\Fofinha\Desktop\UNI\MESTRADO\2o ANO\Sistemas Inteligentes\si\datasets\breast_bin\breast-bin.csv"
+    dataset_=read_csv(filename_breast, sep=",",features=True,label=True)
     dataset_train, dataset_test = train_test_split(dataset_, test_size=0.2)
 
     # initialize the KNN classifier

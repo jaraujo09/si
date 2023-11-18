@@ -128,6 +128,19 @@ if __name__ == '__main__':
     scores_ = leave_one_out_cross_validation(knn, dataset_, seed=1)
 
     # print the scores
-    print(scores_)
+    #print(scores_)
     # print mean score and standard deviation
+    print(f'Mean score: {np.mean(scores_)} +/- {np.std(scores_)}')
+
+    print('\n Testing with breast-bin dataset')
+    from si.io.csv_file import read_csv
+    from si.model_selection.split import stratified_train_test_split
+    from si.models.logistic_regression import LogisticRegression
+
+    filename_breast = r"C:\Users\Fofinha\Desktop\UNI\MESTRADO\2o ANO\Sistemas Inteligentes\si\datasets\breast_bin\breast-bin.csv"
+    breast=read_csv(filename_breast, sep=",",features=True,label=True)
+    model = LogisticRegression()
+    train_data, test_data = stratified_train_test_split(breast, test_size=0.20, random_state=42)
+    scores_ = k_fold_cross_validation(model, breast, cv=5, seed=1)
+    print(scores_)
     print(f'Mean score: {np.mean(scores_)} +/- {np.std(scores_)}')
