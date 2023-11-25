@@ -2,7 +2,6 @@ from abc import abstractmethod
 from typing import Union
 
 import numpy as np
-
 from si.neural_networks.layers import Layer
 
 
