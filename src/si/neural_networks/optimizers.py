@@ -41,7 +41,7 @@ class SGD(Optimizer):
         momentum:
             The momentum to use for updating the weights.
         """
-        super().__init__(learning_rate)
+        super().__init__(learning_rate) #gets learning rate parameter
         self.momentum = momentum
         self.retained_gradient = None  #accumulated gradient from previous epochs (iteractions)
 
@@ -62,8 +62,8 @@ class SGD(Optimizer):
             The updated weights of the layer.
         """
         if self.retained_gradient is None:
-            self.retained_gradient = np.zeros(np.shape(w))
-        self.retained_gradient = self.momentum * self.retained_gradient + (1 - self.momentum) * grad_loss_w
+            self.retained_gradient = np.zeros(np.shape(w))  #if its not initialized we get a matrix of zeros, and will be updated with back propagation
+        self.retained_gradient = self.momentum * self.retained_gradient + (1 - self.momentum) * grad_loss_w  #formula
         return w - self.learning_rate * self.retained_gradient
     
 
@@ -115,16 +115,16 @@ class Adam(Optimizer):
             self.m = np.zeros(np.shape(w))
             self.v= np.zeros(np.shape(w))
         else:
-            self.t +=1
+            self.t +=1 #if there are m and v, incrementing t by 1
             
-            self.m=self.beta_1*self.m + ((1-self.beta_1)*grad_loss_w)
-            self.v=self.beta_2*self.v + ((1-self.beta_2)*(grad_loss_w**2))
+            self.m = self.beta_1*self.m + ((1-self.beta_1)*grad_loss_w) #updated bases on grad_loss
+            self.v = self.beta_2*self.v + ((1-self.beta_2)*(grad_loss_w**2))
 
             # bias 
-            m_hat=self.m/(1-self.beta_1**self.t)
-            v_hat=self.v/(1-self.beta_2**self.t)
+            m_hat = self.m/(1-self.beta_1**self.t)
+            v_hat = self.v/(1-self.beta_2**self.t)
 
-            w= w - (self.learning_rate*(m_hat/(np.sqrt(v_hat) + self.epsilon)))
+            w = w - (self.learning_rate*(m_hat/(np.sqrt(v_hat) + self.epsilon))) #adam algorithm
         
         return w 
         

@@ -84,7 +84,7 @@ class MeanSquaredError(LossFunction):
             The derivative of the loss function.
         """
         # To avoid the additional multiplication by -1 just swap the y_pred and y_true.
-        return 2 * (y_pred - y_true) / y_true.size
+        return 2 * (y_pred - y_true) / y_true.size #formula
 
 
 class BinaryCrossEntropy(LossFunction):
@@ -135,8 +135,8 @@ class BinaryCrossEntropy(LossFunction):
 
 class CategoricalCrossEntropy(LossFunction): #multiclass
     """
-    Categorical Cross Entropy loss function.
-    Measures the dissimilarity between predicted class probabilities and true one-hot encoded class labels
+    The Categorical Cross Entropy loss function is a metric used to quantify the difference between the predicted probabilities 
+    assigned to different classes by a model and the actual one-hot encoded class labels.
     """
 
     def loss(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:

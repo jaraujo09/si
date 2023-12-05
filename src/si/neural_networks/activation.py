@@ -186,7 +186,7 @@ class SoftmaxActivation(ActivationLayer):
 
     def activation_function(self, input: np.ndarray):
         """
-        Softmax activation function.
+        Softmax activation function. Converts pontuation (logits) in a probabilistic distribution, where the sum is 1
 
         Parameters
         ----------
@@ -198,12 +198,13 @@ class SoftmaxActivation(ActivationLayer):
         numpy.ndarray
             The output of the layer.
         """
-        shifted_input = input - np.max(input, axis=0, keepdims=True)
+        shifted_input = input - np.max(input, axis=0, keepdims=True)  #calculates tha max value in axis 0 (vertical)
         # Compute the exponentials of the shifted input
         exp_input = np.exp(shifted_input)
 
         # Compute the softmax output
-        softmax_output = exp_input / np.sum(exp_input, axis=0, keepdims=True) #formula
+        softmax_output = exp_input / np.sum(exp_input, axis=0, keepdims=True) #softmax formula
+        
 
         return softmax_output
 
@@ -242,9 +243,9 @@ class TanhActivation(ActivationLayer):
         numpy.ndarray
             The output of the layer.
         """
-        numerador=np.exp(input)-np.exp(-input) #formula
-        denominador=np.exp(input) + np.exp(-input)
-        return numerador/denominador
+        num = np.exp(input)-np.exp(-input) #formula
+        den = np.exp(input) + np.exp(-input)
+        return num/den
 
     def derivative(self, input: np.ndarray):
         """

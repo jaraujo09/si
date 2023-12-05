@@ -48,12 +48,12 @@ class NeuralNetwork:
         self.metric = metric
 
         # attributes
-        self.layers = []
-        self.history = {}
+        self.layers = []  # neural network layers
+        self.history = {}  #dictionary with error and metric of each epoch (printable if verboise == True)
 
     def add(self, layer: Layer) -> 'NeuralNetwork':
         """
-        Add a layer to the neural network.
+        Add a layer to the neural network, set input shape and inicialize, if needed.
 
         Parameters
         ----------
@@ -65,17 +65,17 @@ class NeuralNetwork:
         NeuralNetwork
             The neural network with the added layer.
         """
-        if self.layers:
-            layer.set_input_shape(shape=self.layers[-1].output_shape())
-        if hasattr(layer, 'initialize'):
-            layer.initialize(self.optimizer)
-        self.layers.append(layer)
+        if self.layers:  #is there layers in the nn
+            layer.set_input_shape(shape=self.layers[-1].output_shape())  #if positive, the new layer gets the shape of the last layer
+        if hasattr(layer, 'initialize'):  #checks if there is the inicialize attribute
+            layer.initialize(self.optimizer)  # called initialize with optimizer as argument
+        self.layers.append(layer)  #adds new layer to layers list of NN
         return self
 
     def _get_mini_batches(self, X: np.ndarray, y: np.ndarray = None,
                           shuffle: bool = True) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
         """
-        Generate mini-batches for the given data.
+        Generate mini-batches for the given data. Used in train of NN
 
         Parameters
         ----------
@@ -92,15 +92,15 @@ class NeuralNetwork:
             The mini-batches.
         """
         n_samples = X.shape[0]
-        indices = np.arange(n_samples)
-        assert self.batch_size <= n_samples, "Batch size cannot be greater than the number of samples"
-        if shuffle:
+        indices = np.arange(n_samples)  # creates a 0 matrix with sample indexes
+        assert self.batch_size <= n_samples, "Batch size cannot be greater than the number of samples" #guaratees that mini batches always have to be least than n_samples, else Error
+        if shuffle:  #if shuffle function activated
             np.random.shuffle(indices)
-        for start in range(0, n_samples - self.batch_size + 1, self.batch_size):
-            if y is not None:
-                yield X[indices[start:start + self.batch_size]], y[indices[start:start + self.batch_size]]
+        for start in range(0, n_samples - self.batch_size + 1, self.batch_size):  #generates mini-batchs starting from "start" to "start+self.batch_size", with step equals to batch size (i.e. 0-4, 4-8, 8-12)
+            if y is not None:  # checks if there are labels with 'y' associated
+                yield X[indices[start:start + self.batch_size]], y[indices[start:start + self.batch_size]] #generates a mini batch with a subset of samples and the respectives labels
             else:
-                yield X[indices[start:start + self.batch_size]], None
+                yield X[indices[start:start + self.batch_size]], None  #if no label, generates a mini batch using only the subset of self.batch_size samples (this can happen in unsupervised methods)
 
     def _forward_propagation(self, X: np.ndarray, training: bool) -> np.ndarray:
         """
@@ -137,37 +137,50 @@ class NeuralNetwork:
         float
             The input error of the layer.
         """
-        error = output_error
-        for layer in reversed(self.layers):
+        error = output_error  #to be updated (in the first case os the error between the predicted y and the true y)
+        for layer in reversed(self.layers):  #reversed in layers
             error = layer.backward_propagation(error)
         return error
 
     def fit(self, dataset: Dataset) -> 'NeuralNetwork':
+        """
+        Fit the model to the dataset
+
+        Parameters
+        ----------
+        dataset: Dataset
+            The dataset to fit the model to
+
+        Returns
+        -------
+        self: NeuralNetwork
+            The fitted model
+        """
         X = dataset.X
         y = dataset.y
-        if np.ndim(y) == 1:
+        if np.ndim(y) == 1:  #expands the dimension of y by incrementing 1 [[0],[1]]
             y = np.expand_dims(y, axis=1)
 
-        self.history = {}
+        self.history = {}  #history of loss
         for epoch in range(1, self.epochs + 1):
             # store mini-batch data for epoch loss and quality metrics calculation
             output_x_ = []
             y_ = []
-            for X_batch, y_batch in self._get_mini_batches(X, y):
+            for X_batch, y_batch in self._get_mini_batches(X, y):  #loop of the mini-bacthes initialized in the training
                 # Forward propagation
                 output = self._forward_propagation(X_batch, training=True)
                 # Backward propagation
-                error = self.loss.derivative(y_batch, output)
-                self._backward_propagation(error)
+                error = self.loss.derivative(y_batch, output)  #derivate of error between predicted and real
+                self._backward_propagation(error)  #for adjust the weights in neural network
 
-                output_x_.append(output)
-                y_.append(y_batch)
+                output_x_.append(output)  #outputs of mini-bacthes
+                y_.append(y_batch)  # labels of mini.bacthes
 
             output_x_all = np.concatenate(output_x_)
             y_all = np.concatenate(y_)
 
             # compute loss
-            loss = self.loss.loss(y_all, output_x_all)
+            loss = self.loss.loss(y_all, output_x_all)  #calculates total loss
 
             if self.metric is not None:
                 metric = self.metric(y_all, output_x_all)
@@ -179,7 +192,7 @@ class NeuralNetwork:
             # save loss and metric for each epoch
             self.history[epoch] = {'loss': loss, 'metric': metric}
 
-            if self.verbose:
+            if self.verbose:  #checks in printing if on
                 print(f"Epoch {epoch}/{self.epochs} - loss: {loss:.4f} - {metric_s}")
 
         return self
@@ -222,15 +235,16 @@ class NeuralNetwork:
 
 if __name__ == '__main__':
     from si.data.dataset import Dataset
-    from si.neural_networks.layers import Layer, DenseLayer, Dropout
+    from si.neural_networks.layers import Layer, DenseLayer #, Dropout
     from si.neural_networks.activation import TanhActivation, SoftmaxActivation
     from si.neural_networks.losses import MeanSquaredError, CategoricalCrossEntropy
+    from si.neural_networks.dropout import Dropout
     from si.metrics.mse import mse
     from si.metrics.accuracy import accuracy
     from si.io.csv_file import read_csv
 
     # training data
-    dataset = read_csv('../../../datasets/iris/iris.csv', sep=',', features=True, label=True)
+    dataset = read_csv(r'C:\Users\Fofinha\Desktop\UNI\MESTRADO\2o ANO\Sistemas Inteligentes\si\datasets\iris\iris.csv', sep=',', features=True, label=True)
     # convert labels to one-hot encoding
     new_y = np.zeros((dataset.y.shape[0], 3))
     for i, label in enumerate(dataset.y):
