@@ -101,14 +101,20 @@ class RandomForestClassifier:
 
         #for each tree
         row = 0
-        for feature_idx, tree in enumerate(self.trees):
+        """ for feature_idx, tree in enumerate(self.trees):
             feature_idx = self.trees[feature_idx][0]
             tree_nr = self.trees[feature_idx][1]
             data_samples = Dataset(dataset.X[:,feature_idx], dataset.y) #not all dataset, only features in the current tree
 
             tree_preds = tree_nr.predict(data_samples)  #predict sampled_data only
             predictions[row,:] = tree_preds  #preds of the tree in the current row
-            row +=1
+            row +=1 """
+
+        for selected_features, tree in self.trees:
+            data_samples = Dataset(dataset.X[:, selected_features], dataset.y)
+            tree_preds = tree.predict(data_samples)
+            predictions[row, :] = tree_preds
+            row += 1
 
         #now get the most commom predicted class
         def majority_vote(sample_predictions):
@@ -140,12 +146,12 @@ class RandomForestClassifier:
 
 if __name__ == '__main__':
     from si.io.csv_file import read_csv
-    from si.model_selection.split import train_test_split
+    from si.model_selection.split import stratified_train_test_split
     filename = r"C:\Users\Fofinha\Desktop\UNI\MESTRADO\2o ANO\Sistemas Inteligentes\si\datasets\iris\iris.csv"
 
     data = read_csv(filename, sep=",",features=True,label=True)
-    train, test = train_test_split(data, test_size=0.33, random_state=42)
-    model = RandomForestClassifier(n_estimators=10000,max_features=4,min_sample_split=2, max_depth=5, mode='gini',seed=42)
+    train, test = stratified_train_test_split(data, test_size=0.33, random_state=42)
+    model = RandomForestClassifier(n_estimators = 1000 , max_features = 4 , min_sample_split = 2, max_depth = 5, mode = 'gini', seed = 42)
     model.fit(train)
     print(model.score(test))
         

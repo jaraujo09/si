@@ -148,25 +148,24 @@ class Dataset:
                 choose the method to fill the NA (value, mean or median)
         """
         if choice is None:
-            raise ValueError("please, put the value or mean or median")
-        columns_true=np.isnan(self.X).any(axis=0) 
+            raise ValueError("Please, choose one of the choices: value, mean or median")
+        columns_true = np.isnan(self.X).any(axis=0) 
         nan_columns_indices = np.where(columns_true)[0] # get index where bool is True
         
 
         for col_index in nan_columns_indices:
-            col = self.X[:, col_index]#cols with nan vals
+            col = self.X[:, col_index] #cols with nan vals
             
-            if choice == "value": #opto por escolher entro o maximo e o minimo
+            if choice == "value": # between min and max
                 min_value = np.nanmin(col)
                 max_value = np.nanmax(col)
-                final = np.random.uniform(min_value, max_value) #algo aleatorio entre o minimo e o maximo
+                final = np.random.uniform(min_value, max_value) 
             elif choice == "median":
                 final = np.nanmedian(col)
             elif choice == "mean":
                 final = np.nanmean(col)
             
-            col[np.isnan(col)] = final # vou buscar os valores nan como true(dentro da coluna já identificada como ter esses valores) e depois , é basicamente col[onde é true?] e substituir pelo que quero
-
+            col[np.isnan(col)] = final # NAN as true
         return self
     
     def remove_from_index(self, index:int):

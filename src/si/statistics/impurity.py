@@ -41,3 +41,17 @@ def gini_impurity(y: np.ndarray) -> float:
     for i in range(len(classes)):
         impurity -= (counts[i] / len(y)) ** 2
     return impurity
+
+
+if __name__ == "__main__":
+    # Test data
+    labels_entropy = np.array([0, 1, 0, 1, 1, 0, 0, 1])
+    labels_gini = np.array([0, 1, 0, 1, 1, 0, 0, 1, 1])
+
+    # Test entropy_impurity
+    entropy_result = entropy_impurity(labels_entropy)
+    print(f"Entropy Impurity for labels_entropy: {entropy_result}")
+
+    # Test gini_impurity
+    gini_result = gini_impurity(labels_gini)
+    print(f"Gini Impurity for labels_gini: {gini_result}")
