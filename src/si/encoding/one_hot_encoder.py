@@ -97,12 +97,10 @@ class OneHotEncoder:
         #ljust -> left-justifies a string within a specified width by padding it with a specified character (or whitespace by default) on the right side 
         
         
-        #agora criar a encode onde no fim terei uma matriz para cada sequencia de max_length * alfabeto-o que faz sentido
         one_hot_encode = []
         identity_matrix =np.eye(len(self.alphabet)) # identity matrix with the size equal to the length of the alphabet
         print(identity_matrix)
-        #criar uma matriz identidade com o tamamho do meu alfabeto , ou seja [1,0,0][0,1,0],[0,0,1] isto para um exemlo de alfabeto com 3 letras/caracteres
-
+        #creates an identity matrix like [1,0,0][0,1,0],[0,0,1]
         for adjusted_seq in sequence_trim_pad: #go through each adjusted_seq in seq_trim_pad
             for letter in adjusted_seq: 
                 value_in_dict = self.char_to_index.get(letter) # index of the character from the dict 
