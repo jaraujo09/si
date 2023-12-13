@@ -102,3 +102,13 @@ if __name__ == '__main__':
     selector = selector.fit(dataset)
     dataset = selector.transform(dataset)
     print(dataset.features)
+
+
+    #Compare with sklearn
+    from sklearn.feature_selection import VarianceThreshold as SklearnVarianceThreshold
+    sklearn_selector = SklearnVarianceThreshold(threshold=0.0)
+    sklearn_dataset = sklearn_selector.fit_transform(dataset.X)
+    print("\nScikit-learn VarianceThreshold Features:")
+    print(dataset.features)
+
+    #same

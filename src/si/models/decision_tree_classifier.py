@@ -307,6 +307,16 @@ if __name__ == '__main__':
     model.print_tree()
     print(model.score(test))
 
+    #compare with sklearn
+    from sklearn.tree import DecisionTreeClassifier as SklearnDecisionTreeClassifier
+    # Scikit-learn DecisionTreeClassifier
+    sklearn_model = SklearnDecisionTreeClassifier(min_samples_split=3, max_depth=3, criterion='gini', random_state=42)
+    sklearn_model.fit(train.X, train.y)
+    sklearn_predictions = sklearn_model.predict(test.X)
+    sklearn_accuracy = accuracy(test.y, sklearn_predictions)
+    print(f"Scikit-learn Model Accuracy: {sklearn_accuracy}")
+
+
 # Review
 # It will iterate through all the features and essentially ensure that the split made with a specific feature and a specific threshold is the one that provides the most gain.
 # It does this as long as the split results in a gain, or until the number of samples and the depth allow it to.

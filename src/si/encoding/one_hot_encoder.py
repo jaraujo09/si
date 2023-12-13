@@ -27,7 +27,8 @@ class OneHotEncoder:
         """
         # arguments
         self.padder = padder
-        self.max_lenght = max_length
+        self.max_length = max_length
+
 
         #estimated parameters
         self.alphabet=set()
@@ -47,12 +48,12 @@ class OneHotEncoder:
 
         """
         
-        if self.max_lenght is None:
+        if self.max_length is None:
             lengths = []
             for sequence in data:
                 lengh = len(sequence)
                 lengths.append(lengh)
-            self.max_lenght = np.max(lengths) #max lenght in data
+            self.max_length = np.max(lengths) #max length in data
 
         # pad the sequences with the padding character
 
@@ -92,21 +93,25 @@ class OneHotEncoder:
         # trim each sequence to the maximum length and pad with the specified character
         sequence_trim_pad = []
         for sequence in data:
-            trim_pad = sequence[:self.max_lenght].ljust(self.max_lenght, self.padder)
+            trim_pad = sequence[:self.max_length].ljust(self.max_length, self.padder)
             sequence_trim_pad.append(trim_pad)
         #ljust -> left-justifies a string within a specified width by padding it with a specified character (or whitespace by default) on the right side 
         
         
+        sorted_alphabet = sorted(self.alphabet)  # sort the classes to align with scikit-learn's lexicographic order
+        class_indices = [self.char_to_index[char] for char in sorted_alphabet]
+
+        # Create a new identity matrix with sorted classes
+        identity_matrix = np.eye(len(sorted_alphabet))
+
         one_hot_encode = []
-        identity_matrix =np.eye(len(self.alphabet)) # identity matrix with the size equal to the length of the alphabet
-        print(identity_matrix)
-        #creates an identity matrix like [1,0,0][0,1,0],[0,0,1]
-        for adjusted_seq in sequence_trim_pad: #go through each adjusted_seq in seq_trim_pad
-            for letter in adjusted_seq: 
-                value_in_dict = self.char_to_index.get(letter) # index of the character from the dict 
-                one_hot_sequence = identity_matrix[value_in_dict - 1] # extract the corresponding row form the identity matrix  (-1 due to python indexing)
-                
-                one_hot_encode.append(one_hot_sequence)
+        for adjusted_seq in sequence_trim_pad:
+            for letter in adjusted_seq:
+                if letter != adjusted_seq:
+                    value_in_dict = self.char_to_index.get(letter)
+                    one_hot_sequence = identity_matrix[class_indices.index(value_in_dict)]
+                    one_hot_encode.append(one_hot_sequence)
+
         return one_hot_encode
 
     def fit_transform(self, data: list[str]) -> np.ndarray:
@@ -147,19 +152,34 @@ class OneHotEncoder:
             text ="".join(total_sequences) # join all chars into one string
         
         trimmed_segments = []
-        for i in range (0,len(text),self.max_lenght):#vai agora analisar cada trecho de sequencia de cada vez
-            string = text[i:i + self.max_lenght]
+        for i in range (0,len(text),self.max_length): #analyses each piece at time
+            string = text[i:i + self.max_length]
             trimmed_string = string.rstrip(self.padder) #trims the occurences of the padding character 
             trimmed_segments.append(trimmed_string)
         return trimmed_segments #decoded sequences
 
 #testing
-encoder = OneHotEncoder(padder="?", max_length=9)
-data = ["abc", "aabd"]
-encoded_data = encoder.fit_transform(data)
-print("One-Hot Encoding:")
-print(encoded_data)
-decoded_data = encoder.inverse_transform(encoded_data)
 
-print("\nDecoded Data:")
-print(decoded_data)
+if __name__ == '__main__':
+    from sklearn.preprocessing import OneHotEncoder as SklearnOneHotEncoder
+
+    encoder = OneHotEncoder(padder="?", max_length=9)
+    data = ["abc", "aabd"]
+    encoded_data = encoder.fit_transform(data)
+    print("My One-Hot Encoding:")
+    print(np.array(encoded_data))
+    decoded_data = encoder.inverse_transform(encoded_data)
+
+    print("\nDecoded Data:")
+    print(decoded_data)
+
+    sklearn_encoder = SklearnOneHotEncoder(sparse = False, handle_unknown = 'ignore')
+    sklearn_data = np.array(data).reshape(-1, 1)
+    sklearn_encoded_data = sklearn_encoder.fit_transform(sklearn_data)
+    
+    #print("\nScikit-learn One-Hot Encoding:")
+    #print(sklearn_encoded_data)
+
+    sklearn_decoded_data = sklearn_encoder.inverse_transform(sklearn_encoded_data)
+    print("\nScikit-learn Decoded Data:")
+    print(sklearn_decoded_data)

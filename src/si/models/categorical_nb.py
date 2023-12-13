@@ -107,6 +107,7 @@ if __name__ == '__main__':
     # import dataset
     from si.data.dataset import Dataset
     from si.model_selection.split import train_test_split
+    from sklearn.naive_bayes import CategoricalNB as skCatNB
 
     # load and split the dataset
     dataset_ = Dataset.from_random(600, 100, 2)
@@ -123,3 +124,19 @@ if __name__ == '__main__':
     # evaluate the model on the test dataset
     score = nb.score(dataset_test)
     print(f'The accuracy of the model is: {score}')
+
+    # compare with sklearn
+    sk_nb = skCatNB(alpha=1.0)  # alpha is the smoothing parameter in scikit-learn
+
+    # fit scikit-learn's model to the train dataset
+    sk_nb.fit(dataset_train.X, dataset_train.y)
+
+    # predict using scikit-learn's model
+    sk_predictions = sk_nb.predict(dataset_test.X)
+
+    # evaluate scikit-learn's model on the test dataset
+    sk_score = accuracy(dataset_test.y, sk_predictions)
+    print(f'Scikit-learn\'s CategoricalNB accuracy: {sk_score}')
+
+    # verifico que são a mesma accuracy yay
+
